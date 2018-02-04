@@ -8,13 +8,18 @@
 
 import Foundation
 
+/// Implementation of an RPN (Reverse Polish Notation) calculator.
 class Calculator
 {
 	private(set) public var currentDisplay: String = "0"
-	
+
+	/// Stores digit and period inputs until enter or an operation input is taken.
 	private var inputBuffer = [Input]()
+
+	/// Main memory stack of the calculator.
 	private var operationStack = [Float]()
-	
+
+	/// Calulator input function. Will write to the input buffer if an input digit/period is provided, or run an operation.
 	public func take(inputButton: Button)
 	{
 		switch inputButton
@@ -24,6 +29,7 @@ class Calculator
 			updateDisplayFromInputBuffer()
 		
 		case .doubleZero:
+			// Special case of the digit input. We simply append zero twice.
 			inputBuffer.append(.digit(0))
 			inputBuffer.append(.digit(0))
 			updateDisplayFromInputBuffer()
@@ -39,11 +45,13 @@ class Calculator
 		case .backspace:
 			if inputBuffer.count > 0
 			{
+				// If the input buffer is not empty, remove the last-inserted element.
 				inputBuffer.removeLast()
 				updateDisplayFromInputBuffer()
 			}
 			else
 			{
+				// If the input buffer is empty, then also empty the operation stack, thus essentially "resetting" the calculator.
 				operationStack.removeAll()
 				currentDisplay = "0.0"
 			}
@@ -51,6 +59,7 @@ class Calculator
 		case .enter:
 			if inputBuffer.count > 0, let inputAsFloat = inputBuffer.floatValue
 			{
+				// If parsing of the input buffer succeeds, we push that value into the operation stack and empty the input buffer.
 				inputBuffer.removeAll()
 				operationStack.push(inputAsFloat)
 			}
@@ -63,12 +72,15 @@ class Calculator
 		case .operation(let operation):
 			if inputBuffer.count > 0, let inputAsFloat = inputBuffer.floatValue
 			{
+				// If parsing of the input buffer succeeds, we push that value into the operations stack, empty the input buffer, and run
+				// the provided operation.
 				inputBuffer.removeAll()
 				operationStack.push(inputAsFloat)
 				runOperation(operation)
 			}
 			else
 			{
+				// If the input buffer is empty, we simply operate on whatever is already on the stack.
 				runOperation(operation)
 			}
 		}
@@ -76,51 +88,50 @@ class Calculator
 	
 	private func runOperation(_ operation: Operation)
 	{
+		// Check whether the operation stack has enough elements for the provided operation.
 		guard operationStack.depth >= operation.requiredDepth else
 		{
+			// If not we simply do nothing for now.
 			return
 		}
-		
+
+		// Run the operation by popping from the stack, operating, then pushing the result back in.
 		switch (operation, operationStack.depth)
 		{
-		case (.addition, 1):
-			operationStack.push(operationStack.pop()!)
-		
+		// Commutative operations:
 		case (.addition, _):
-			let valueA = operationStack.pop()!
-			let valueB = operationStack.pop()!
-			operationStack.push(valueA + valueB)
-			
-		case (.subtraction, 1):
-			operationStack.push(operationStack.pop()! * -1)
-			
-		case (.subtraction, _):
-			let valueA = operationStack.pop()!
-			let valueB = operationStack.pop()!
-			operationStack.push(valueB - valueA)
-			
+			operationStack.push(operationStack.pop()! + operationStack.pop()!)
+
 		case (.multiplication, _):
-			let valueA = operationStack.pop()!
-			let valueB = operationStack.pop()!
-			operationStack.push(valueA * valueB)
-			
-		case (.division, _):
-			let valueA = operationStack.pop()!
-			let valueB = operationStack.pop()!
-			operationStack.push(valueB / valueA)
-			
-		case (.exponentiation, _):
-			let valueA = operationStack.pop()!
-			let valueB = operationStack.pop()!
-			operationStack.push(powf(valueB, valueA))
-			
+			operationStack.push(operationStack.pop()! * operationStack.pop()!)
+
 		case (.squareRoot, _):
 			operationStack.push(sqrtf(operationStack.pop()!))
+
+		case (.subtraction, 1):
+			// Subtracting with a stack depth of one has the effect of subtracting the top value
+			// from zero, which is equivalent to multiplying it by -1.
+			operationStack.push(operationStack.pop()! * -1)
+
+		// Non-commutative operations (those that require a buffer to reorder the operands):
+		case (.subtraction, _):
+			let buffer = operationStack.pop()!
+			operationStack.push(operationStack.pop()! - buffer)
+			
+		case (.division, _):
+			let buffer = operationStack.pop()!
+			operationStack.push(operationStack.pop()! / buffer)
+			
+		case (.exponentiation, _):
+			let buffer = operationStack.pop()!
+			operationStack.push(powf(operationStack.pop()!, buffer))
 		}
-		
+
+		// Write to the display string from the stack top.
 		updateDisplayFromStack()
 	}
-	
+
+	/// Represents one valid element in the input buffer.
 	fileprivate enum Input: Equatable
 	{
 		case digit(Int)
@@ -136,7 +147,8 @@ class Calculator
 			}
 		}
 	}
-	
+
+	/// Sets the display value from the input buffer.
 	private func updateDisplayFromInputBuffer()
 	{
 		if let inputAsFloat = inputBuffer.floatValue
@@ -148,7 +160,8 @@ class Calculator
 			currentDisplay = "Error"
 		}
 	}
-	
+
+	/// Sets the display value from the top stack element.
 	private func updateDisplayFromStack()
 	{
 		if let topOfStack = operationStack.top
@@ -160,7 +173,8 @@ class Calculator
 			currentDisplay = "Error"
 		}
 	}
-	
+
+	/// Represents each of the "buttons" this calculator is capable of undertstanding.
 	enum Button
 	{
 		case digit(Int)
@@ -170,7 +184,8 @@ class Calculator
 		case period
 		case operation(Operation)
 	}
-	
+
+	/// Represents each mathematical operation this calculator can perform.
 	enum Operation
 	{
 		case addition
@@ -179,12 +194,13 @@ class Calculator
 		case division
 		case squareRoot
 		case exponentiation
-		
+
+		/// How many elements there need to be in the stack so that a specific operation can be executed.
 		var requiredDepth: Int
 		{
 			switch self
 			{
-			case .addition: 		return 1
+			case .addition: 		return 2
 			case .subtraction: 		return 1
 			case .multiplication:	return 2
 			case .division:			return 2
