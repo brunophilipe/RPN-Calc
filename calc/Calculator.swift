@@ -135,15 +135,6 @@ class Calculator
 			default: return false
 			}
 		}
-		
-		var stringValue: String
-		{
-			switch self
-			{
-			case .digit(let digit): return "\(digit)"
-			case .period: return "."
-			}
-		}
 	}
 	
 	private func updateDisplayFromInputBuffer()
@@ -206,10 +197,39 @@ class Calculator
 
 private extension Array where Element == Calculator.Input
 {
+	/// Parses each input element in the array, operating its value into an accumulator, and returning the accumulator value after the
+	/// last element is parsed.
 	var floatValue: Float?
 	{
+		var accumulator: Float = 0.0
+		var decimalsExponent: Float = 0.0
+
+		for element in self
+		{
+			switch (element, decimalsExponent)
+			{
+			// Integer digits, increasing exponent simply by multiplying by 10
+			case (.digit(let digit), 0):
+				accumulator *= 10.0
+				accumulator += Float(digit)
+
+			// First period input, start decrementing decimals exponent
+			case (.period, 0):
+				decimalsExponent = -1.0
+
+			// Decimal digits, decreasing exponent by decrementing `decimalsExponent`.
+			case (.digit(let digit), let exponent):
+				accumulator += Float(digit) * powf(10.0, exponent)
+				decimalsExponent -= 1.0
+
+			case (.period, _):
+				// This is an error. A number can only have one decimal point. Currently we simply do nothing.
+				break
+			}
+		}
+
 		// Prepending a zero is a quick way to make numbers starting with a period work (eg: ".37" => 0.37).
-		return Float("0" + map({ $0.stringValue }).joined())
+		return accumulator
 	}
 }
 
@@ -218,10 +238,10 @@ private protocol Stack
 {
 	associatedtype StackElement
 	
-	/// Inserts an element at the start of the array (top of the stack).
+	/// Inserts an element at the top of the stack.
 	mutating func push(_ element: StackElement)
 	
-	/// Removes the element at the start of the array (top of the stack) and returns it, if any.
+	/// Removes the element from the top of the stack and returns it, if any.
 	mutating func pop() -> StackElement?
 	
 	/// Allows the top element of the stack to be read without it being popped.

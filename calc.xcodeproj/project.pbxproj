@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		154A7AEF2026A92200908824 /* Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154A7AEE2026A92200908824 /* Calculator.swift */; };
 		15B4F4E42025F70C002E09D8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B4F4E32025F70C002E09D8 /* AppDelegate.swift */; };
 		15B4F4E62025F70C002E09D8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B4F4E52025F70C002E09D8 /* ViewController.swift */; };
 		15B4F4E92025F70C002E09D8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 15B4F4E72025F70C002E09D8 /* Main.storyboard */; };
@@ -22,6 +21,8 @@
 		15B4F51D2025F70D002E09D8 /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B4F51C2025F70D002E09D8 /* InterfaceController.swift */; };
 		15B4F51F2025F70D002E09D8 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B4F51E2025F70D002E09D8 /* ExtensionDelegate.swift */; };
 		15B4F5212025F70D002E09D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15B4F5202025F70D002E09D8 /* Assets.xcassets */; };
+		15EA8463202784C7005FC79B /* Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154A7AEE2026A92200908824 /* Calculator.swift */; };
+		15EA8464202784DF005FC79B /* Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154A7AEE2026A92200908824 /* Calculator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -167,6 +168,7 @@
 			children = (
 				15B4F4E32025F70C002E09D8 /* AppDelegate.swift */,
 				15B4F4E52025F70C002E09D8 /* ViewController.swift */,
+				154A7AEE2026A92200908824 /* Calculator.swift */,
 				15B4F4E72025F70C002E09D8 /* Main.storyboard */,
 				15B4F4EA2025F70C002E09D8 /* Assets.xcassets */,
 				15B4F4EC2025F70C002E09D8 /* LaunchScreen.storyboard */,
@@ -208,7 +210,6 @@
 			children = (
 				15B4F51C2025F70D002E09D8 /* InterfaceController.swift */,
 				15B4F51E2025F70D002E09D8 /* ExtensionDelegate.swift */,
-				154A7AEE2026A92200908824 /* Calculator.swift */,
 				15B4F5202025F70D002E09D8 /* Assets.xcassets */,
 				15B4F5222025F70D002E09D8 /* Info.plist */,
 			);
@@ -414,6 +415,7 @@
 			files = (
 				15B4F4E62025F70C002E09D8 /* ViewController.swift in Sources */,
 				15B4F4E42025F70C002E09D8 /* AppDelegate.swift in Sources */,
+				15EA8463202784C7005FC79B /* Calculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,7 +441,7 @@
 			files = (
 				15B4F51F2025F70D002E09D8 /* ExtensionDelegate.swift in Sources */,
 				15B4F51D2025F70D002E09D8 /* InterfaceController.swift in Sources */,
-				154A7AEF2026A92200908824 /* Calculator.swift in Sources */,
+				15EA8464202784DF005FC79B /* Calculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
